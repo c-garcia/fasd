@@ -1,5 +1,14 @@
+function __grep
+	if test -e /usr/local/bin/ggrep
+		echo /usr/local/bin/ggrep
+	else
+		echo grep
+	end
+end
+
 function __fasd_expand_vars -d "Expands only the first occurance of a variable in the passed string without evaluating the string"
-  set -lx vars (echo -n $argv | grep -oP '(?!\\\\)\$\K([A-z_][A-z0-9_]*?)([^A-z0-9_]|\b|\n)' | perl -pe 's/(.+?)(?:[^A-z0-9_]|\b)$/\1\n/' | sort -u)
+  set grep_cmd $(__grep)
+  set -lx vars (echo -n $argv | $grep_cmd -oP '(?!\\\\)\$\K([A-z_][A-z0-9_]*?)([^A-z0-9_]|\b|\n)' | perl -pe 's/(.+?)(?:[^A-z0-9_]|\b)$/\1\n/' | sort -u)
   for var in $vars
     # Only replace if the variable is defined
     if set -q $var
